@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,7 @@ fun SplashScreen(onNavigate: () -> Unit) {
         animationSpec = tween(1200, easing = EaseInOut), label = "alpha"
     )
     val scaleAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0.75f,
+        targetValue = if (startAnimation) 1f else 0.82f,
         animationSpec = tween(1200, easing = EaseOutBack), label = "scale"
     )
     val taglineAlpha by animateFloatAsState(
@@ -43,57 +44,67 @@ fun SplashScreen(onNavigate: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(listOf(SlateDark, NavyDeep, NavyMid))
-            ),
+            .background(HermesCream),
         contentAlignment = Alignment.Center
     ) {
-        // 배경 글로우
+        // 상단 갈색 장식 바
         Box(
             modifier = Modifier
-                .size(300.dp)
-                .alpha(0.15f)
-                .background(
-                    Brush.radialGradient(listOf(AmberGold, NavyDeep))
-                )
+                .fillMaxWidth()
+                .height(4.dp)
+                .align(Alignment.TopCenter)
+                .background(Brush.horizontalGradient(listOf(HermesBrown, HermesOrange, HermesBrown)))
         )
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // 아이콘
-            Text(
-                text = "✦",
-                fontSize = 64.sp,
-                color = AmberGold,
-                modifier = Modifier.scale(scaleAnim).alpha(alphaAnim)
+            // 로고 박스
+            Box(
+                modifier = Modifier
+                    .scale(scaleAnim)
+                    .alpha(alphaAnim)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "✦",
+                        fontSize = 56.sp,
+                        color = HermesOrange
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "LETTERBLOOM",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = HermesBrown,
+                        letterSpacing = 5.sp
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "레터블룸",
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = HermesBrown
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // 구분선
+            Box(
+                modifier = Modifier
+                    .alpha(taglineAlpha)
+                    .width(40.dp)
+                    .height(1.dp)
+                    .background(HermesGold)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "LetterBloom",
-                fontSize = 38.sp,
-                fontWeight = FontWeight.Bold,
-                color = OffWhite,
-                modifier = Modifier.scale(scaleAnim).alpha(alphaAnim)
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "레터블룸",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = AmberGold,
-                modifier = Modifier.alpha(alphaAnim)
-            )
-
-            Spacer(modifier = Modifier.height(36.dp))
-
-            Text(
                 text = "지금이 딱 좋은 때",
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
-                color = White80,
+                color = HermesBrownMid,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(taglineAlpha)
             )
@@ -103,20 +114,30 @@ fun SplashScreen(onNavigate: () -> Unit) {
             Text(
                 text = "Travel English, Start Today ✈️",
                 fontSize = 13.sp,
-                color = TealElectric,
+                color = TextMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(taglineAlpha)
             )
         }
 
+        // 하단 버전
         Text(
-            text = "v1.0",
-            fontSize = 12.sp,
-            color = White30,
+            text = "v1.2",
+            fontSize = 11.sp,
+            color = TextLight,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 32.dp)
                 .alpha(taglineAlpha)
+        )
+
+        // 하단 장식 바
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .align(Alignment.BottomCenter)
+                .background(Brush.horizontalGradient(listOf(HermesBrown, HermesOrange, HermesBrown)))
         )
     }
 }
