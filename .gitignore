@@ -1,0 +1,17 @@
+# Local properties (SDK 경로 등 민감 정보)
+local.properties
+
+# Build outputs
+.gradle/
+app/build/
+build/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
+# OmC 내부 파일
+.omc/
