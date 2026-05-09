@@ -99,6 +99,7 @@ private fun CategoryCard(
         WordCategory.TRANSPORT -> Color(0xFF4A6FA5)
         WordCategory.EMERGENCY -> Color(0xFFB03A2E)
         WordCategory.DAILY -> HermesBrownMid
+        WordCategory.BUSINESS -> TiffanyDeep
     }
 
     Box(
