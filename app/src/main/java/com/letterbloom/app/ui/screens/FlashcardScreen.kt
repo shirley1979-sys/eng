@@ -86,8 +86,22 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
     )
 
     if (words.isEmpty()) {
-        Box(Modifier.fillMaxSize().background(HermesCream), contentAlignment = Alignment.Center) {
-            Text("단어가 없어요", color = TextMedium)
+        Box(Modifier.fillMaxSize().background(HermesCream)) {
+            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Text("아직 단어가 없어요", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = if (category == "FAVORITES") "플래시카드에서 ❤️를 눌러 추가해보세요"
+                           else "퀴즈를 풀면 오답이 여기 저장돼요",
+                    fontSize = 14.sp, color = TextLight, textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Box(
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(HermesOrange)
+                        .clickable { onBack() }.padding(horizontal = 24.dp, vertical = 12.dp)
+                ) { Text("← 돌아가기", color = Color.White, fontWeight = FontWeight.Bold) }
+            }
         }
         return
     }

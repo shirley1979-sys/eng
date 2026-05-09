@@ -404,7 +404,8 @@ val quizQuestions = listOf(
         options = listOf("boarding", "passport", "gate", "ticket"),
         correctIndex = 0,
         situation = "✈️ At the airport",
-        situationKorean = "공항 체크인 시"
+        situationKorean = "공항 체크인 시",
+        wordEnglish = "digital boarding pass"
     ),
     QuizQuestion(
         sentence = "What's the Wi-Fi ___ for the room?",
@@ -412,7 +413,8 @@ val quizQuestions = listOf(
         options = listOf("password", "number", "key", "code"),
         correctIndex = 0,
         situation = "🏨 At the hotel",
-        situationKorean = "호텔 체크인 직후"
+        situationKorean = "호텔 체크인 직후",
+        wordEnglish = "Wi-Fi password"
     ),
     QuizQuestion(
         sentence = "Can I tap to ___ with my phone?",
@@ -420,7 +422,8 @@ val quizQuestions = listOf(
         options = listOf("pay", "order", "scan", "check"),
         correctIndex = 0,
         situation = "🍽️ At a restaurant",
-        situationKorean = "식당 계산 시"
+        situationKorean = "식당 계산 시",
+        wordEnglish = "tap to pay"
     ),
     QuizQuestion(
         sentence = "I bought skip-the-___ tickets online.",
@@ -428,7 +431,8 @@ val quizQuestions = listOf(
         options = listOf("line", "queue", "wait", "gate"),
         correctIndex = 0,
         situation = "🗺️ At a tourist spot",
-        situationKorean = "인기 명소에서"
+        situationKorean = "인기 명소에서",
+        wordEnglish = "skip-the-line ticket"
     ),
     QuizQuestion(
         sentence = "Let me book a ride on a ride-___ app.",
@@ -436,7 +440,8 @@ val quizQuestions = listOf(
         options = listOf("hailing", "sharing", "calling", "booking"),
         correctIndex = 0,
         situation = "🚌 Getting around",
-        situationKorean = "이동 시"
+        situationKorean = "이동 시",
+        wordEnglish = "ride-hailing app"
     ),
     QuizQuestion(
         sentence = "Please call an ___!",
@@ -444,7 +449,8 @@ val quizQuestions = listOf(
         options = listOf("ambulance", "police", "doctor", "hospital"),
         correctIndex = 0,
         situation = "🆘 Emergency",
-        situationKorean = "응급 상황에서"
+        situationKorean = "응급 상황에서",
+        wordEnglish = "call an ambulance"
     ),
     QuizQuestion(
         sentence = "I'm ___ up on the proposal I sent.",
@@ -452,7 +458,8 @@ val quizQuestions = listOf(
         options = listOf("following", "checking", "looking", "coming"),
         correctIndex = 0,
         situation = "💼 Business email",
-        situationKorean = "업무 이메일에서"
+        situationKorean = "업무 이메일에서",
+        wordEnglish = "I'm following up on"
     ),
     QuizQuestion(
         sentence = "Is this a good ___ to talk?",
@@ -460,7 +467,8 @@ val quizQuestions = listOf(
         options = listOf("time", "moment", "chance", "place"),
         correctIndex = 0,
         situation = "💼 Business call",
-        situationKorean = "전화 시작 시"
+        situationKorean = "전화 시작 시",
+        wordEnglish = "is this a good time"
     )
 )
 

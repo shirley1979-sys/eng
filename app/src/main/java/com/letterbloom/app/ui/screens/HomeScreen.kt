@@ -37,7 +37,7 @@ fun HomeScreen(onCategoryClick: () -> Unit, onProgressClick: () -> Unit) {
     var totalWords by remember { mutableStateOf(0) }
     var currentLevelNum by remember { mutableStateOf(1) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(true) {
         todayWords = LearningPrefs.getTodayWords(context)
         dailyGoal = LearningPrefs.getDailyGoal(context)
         streakDays = LearningPrefs.getStreakDays(context)
