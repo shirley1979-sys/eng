@@ -119,4 +119,55 @@ object LearningPrefs {
             .putBoolean(KEY_ONBOARDING_DONE, true)
             .apply()
     }
+    // ── 즐겨찾기 ──
+    private const val KEY_FAVORITES = "favorites"
+
+    fun getFavorites(context: Context): Set<String> =
+        prefs(context).getStringSet(KEY_FAVORITES, emptySet()) ?: emptySet()
+
+    fun toggleFavorite(context: Context, english: String): Boolean {
+        val favs = getFavorites(context).toMutableSet()
+        return if (english in favs) {
+            favs.remove(english)
+            prefs(context).edit().putStringSet(KEY_FAVORITES, favs).apply()
+            false
+        } else {
+            favs.add(english)
+            prefs(context).edit().putStringSet(KEY_FAVORITES, favs).apply()
+            true
+        }
+    }
+
+    // ── 오답 노트 ──
+    private const val KEY_WRONG_WORDS = "wrong_words"
+
+    fun getWrongWords(context: Context): Set<String> =
+        prefs(context).getStringSet(KEY_WRONG_WORDS, emptySet()) ?: emptySet()
+
+    fun addWrongWord(context: Context, english: String) {
+        if (english.isEmpty()) return
+        val wrong = getWrongWords(context).toMutableSet()
+        wrong.add(english)
+        prefs(context).edit().putStringSet(KEY_WRONG_WORDS, wrong).apply()
+    }
+
+    fun markWordCorrect(context: Context, english: String) {
+        val wrong = getWrongWords(context).toMutableSet()
+        wrong.remove(english)
+        prefs(context).edit().putStringSet(KEY_WRONG_WORDS, wrong).apply()
+    }
+
+    // ── 이어서 학습 ──
+    private fun progressKey(category: String) = "progress_$category"
+
+    fun getCategoryProgress(context: Context, category: String): Int =
+        prefs(context).getInt(progressKey(category), 0)
+
+    fun saveCategoryProgress(context: Context, category: String, index: Int) {
+        prefs(context).edit().putInt(progressKey(category), index).apply()
+    }
+
+    fun resetCategoryProgress(context: Context, category: String) {
+        prefs(context).edit().remove(progressKey(category)).apply()
+    }
 }

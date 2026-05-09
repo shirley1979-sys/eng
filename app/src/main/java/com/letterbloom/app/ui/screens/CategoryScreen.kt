@@ -8,6 +8,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,11 +24,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.letterbloom.app.data.WordCategory
+import com.letterbloom.app.data.LearningPrefs
 import com.letterbloom.app.data.wordList
 import com.letterbloom.app.ui.theme.*
 
 @Composable
 fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val favoriteCount = LearningPrefs.getFavorites(context).size
+    val wrongCount = LearningPrefs.getWrongWords(context).size
     val categories = WordCategory.values().toList()
 
     Box(modifier = Modifier.fillMaxSize().background(HermesCream)) {
@@ -57,8 +64,31 @@ fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
-                Text(text = "8가지 여행 카테고리 중 하나를 선택하세요",
-                    fontSize = 12.sp, color = TextMedium)
+                Text(text = "9가지 카테고리 + 나만의 학습 모드", fontSize = 12.sp, color = TextMedium)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 특별 학습 카드
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SpecialCard(
+                        icon = { Icon(Icons.Default.Favorite, null, tint = Color(0xFFE91E63), modifier = Modifier.size(28.dp)) },
+                        title = "즐겨찾기",
+                        count = favoriteCount,
+                        color = Color(0xFFE91E63),
+                        modifier = Modifier.weight(1f),
+                        onClick = { onCategorySelected("FAVORITES") }
+                    )
+                    SpecialCard(
+                        icon = { Icon(Icons.Default.Bookmark, null, tint = Color(0xFFFF9800), modifier = Modifier.size(28.dp)) },
+                        title = "오답노트",
+                        count = wrongCount,
+                        color = Color(0xFFFF9800),
+                        modifier = Modifier.weight(1f),
+                        onClick = { onCategorySelected("WRONG") }
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 categories.chunked(2).forEach { row ->
@@ -146,6 +176,54 @@ private fun CategoryCard(
                     color = accentColor,
                     fontWeight = FontWeight.SemiBold
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpecialCard(
+    icon: @Composable () -> Unit,
+    title: String,
+    count: Int,
+    color: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(0.85f)
+            .clip(RoundedCornerShape(18.dp))
+            .background(Color.White)
+            .border(1.5.dp, color.copy(alpha = 0.4f), RoundedCornerShape(18.dp))
+            .clickable { onClick() }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(3.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(color.copy(alpha = 0.5f))
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            icon()
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = title, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                color = InkBrown, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(color.copy(alpha = 0.1f))
+                    .padding(horizontal = 10.dp, vertical = 3.dp)
+            ) {
+                Text(text = "${count}단어", fontSize = 11.sp,
+                    color = color, fontWeight = FontWeight.SemiBold)
             }
         }
     }

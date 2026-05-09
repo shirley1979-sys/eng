@@ -196,7 +196,14 @@ fun QuizScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit) {
                         .clickable(enabled = !showResult) {
                             selectedOption = index
                             showResult = true
-                            if (index == question.correctIndex) score++
+                            if (index == question.correctIndex) {
+                                score++
+                                if (question.wordEnglish.isNotEmpty())
+                                    LearningPrefs.markWordCorrect(context, question.wordEnglish)
+                            } else {
+                                if (question.wordEnglish.isNotEmpty())
+                                    LearningPrefs.addWrongWord(context, question.wordEnglish)
+                            }
                         }
                         .padding(horizontal = 18.dp, vertical = 14.dp)
                 ) {

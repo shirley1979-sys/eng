@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,10 +38,29 @@ import java.util.Locale
 @Composable
 fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
-    val wordCategory = try { WordCategory.valueOf(category) } catch (e: Exception) { WordCategory.AIRPORT }
-    val words = remember { wordList.filter { it.category == wordCategory }.shuffled() }
+    val isSpecial = category == "FAVORITES" || category == "WRONG"
+    val wordCategory = if (!isSpecial) {
+        try { WordCategory.valueOf(category) } catch (e: Exception) { WordCategory.AIRPORT }
+    } else WordCategory.AIRPORT
 
-    var currentIndex by remember { mutableStateOf(0) }
+    val words = remember {
+        when (category) {
+            "FAVORITES" -> {
+                val favs = LearningPrefs.getFavorites(context)
+                wordList.filter { it.english in favs }
+            }
+            "WRONG" -> {
+                val wrong = LearningPrefs.getWrongWords(context)
+                wordList.filter { it.english in wrong }
+            }
+            else -> wordList.filter { it.category == wordCategory }
+        }
+    }
+    val startIndex = if (isSpecial) 0 else LearningPrefs.getCategoryProgress(context, category)
+    var currentIndex by remember { mutableStateOf(startIndex.coerceAtMost((words.size - 1).coerceAtLeast(0))) }
+    var isFavorite by remember(currentIndex) {
+        mutableStateOf(words.getOrNull(currentIndex)?.english?.let { LearningPrefs.getFavorites(context).contains(it) } ?: false)
+    }
     var showKorean by remember { mutableStateOf(false) }
     var countdown by remember { mutableStateOf(2) }
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
@@ -53,6 +74,7 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
 
     LaunchedEffect(currentIndex) {
         showKorean = false
+        if (!isSpecial) LearningPrefs.saveCategoryProgress(context, category, currentIndex)
         countdown = 2
         repeat(2) { delay(1000); countdown-- }
         showKorean = true
@@ -96,7 +118,18 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                     Text(text = "${currentIndex + 1} / ${words.size}",
                         fontSize = 11.sp, color = TextLight)
                 }
-                Box(modifier = Modifier.size(40.dp))
+                IconButton(onClick = {
+                    val eng = words.getOrNull(currentIndex)?.english ?: return@IconButton
+                    isFavorite = LearningPrefs.toggleFavorite(context, eng)
+                }) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite
+                                      else Icons.Default.FavoriteBorder,
+                        contentDescription = "즐겨찾기",
+                        tint = if (isFavorite) Color(0xFFE91E63) else TextLight,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -224,7 +257,10 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                             LearningPrefs.addLearnedWords(context, 1)
                             coroutineScope.launch { SupabaseSync.saveProgress(context) }
                             if (currentIndex < words.size - 1) currentIndex++
-                            else onComplete()
+                            else {
+                                if (!isSpecial) LearningPrefs.resetCategoryProgress(context, category)
+                                onComplete()
+                            }
                         }
                         .padding(vertical = 16.dp),
                     contentAlignment = Alignment.Center
