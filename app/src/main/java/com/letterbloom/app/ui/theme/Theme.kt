@@ -1,28 +1,28 @@
 package com.letterbloom.app.ui.theme
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val LetterBloomColorScheme = darkColorScheme(
-    primary = AmberGold,
-    onPrimary = NavyDeep,
-    primaryContainer = AmberPale,
-    onPrimaryContainer = AmberLight,
-    secondary = TealElectric,
-    onSecondary = NavyDeep,
-    secondaryContainer = TealPale,
-    onSecondaryContainer = TealLight,
-    tertiary = CoralAccent,
-    onTertiary = OffWhite,
-    background = NavyDeep,
-    onBackground = OffWhite,
-    surface = NavyMid,
-    onSurface = OffWhite,
-    surfaceVariant = NavySurface,
-    onSurfaceVariant = White80,
-    outline = BorderColor,
-    outlineVariant = NavyLight,
+private val LetterBloomColorScheme = lightColorScheme(
+    primary              = TiffanyMint,
+    onPrimary            = PureWhite,
+    primaryContainer     = TiffanyCream,
+    onPrimaryContainer   = TextDark,
+    secondary            = TiffanyLight,
+    onSecondary          = PureWhite,
+    secondaryContainer   = IceMint,
+    onSecondaryContainer = TextPrimary,
+    tertiary             = TiffanyDeep,
+    onTertiary           = PureWhite,
+    background           = SoftWhite,
+    onBackground         = TextDark,
+    surface              = PureWhite,
+    onSurface            = TextDark,
+    surfaceVariant       = MintWhite,
+    onSurfaceVariant     = TextMedium,
+    outline              = BorderMint,
+    outlineVariant       = BorderSoft,
 )
 
 @Composable

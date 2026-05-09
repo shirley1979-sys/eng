@@ -2,54 +2,78 @@ package com.letterbloom.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// LetterBloom — Hermès Editorial Palette
-val HermesOrange    = Color(0xFFE8601C)
-val HermesOrangeDeep = Color(0xFFC94E10)
-val HermesCream     = Color(0xFFFAF4E8)
-val HermesIvory     = Color(0xFFF5ECD7)
-val HermesBrown     = Color(0xFF2C1810)
-val HermesBrownMid  = Color(0xFF5C3420)
-val HermesGold      = Color(0xFFC9A84C)
-val HermesGoldLight = Color(0xFFE2C06A)
-val HermesSand      = Color(0xFFEAD8BA)
-val HermesWarm      = Color(0xFFF0E6D2)
+// LetterBloom — Tiffany Mint & White Palette
 
-// Text
-val InkBrown        = Color(0xFF1A0E08)
-val TextBrown       = Color(0xFF3D2010)
-val TextMedium      = Color(0xFF7A5540)
-val TextLight       = Color(0xFFAA8870)
+// ── 핵심 티파니 민트 ──
+val TiffanyMint      = Color(0xFF0ABAB5)
+val TiffanyDeep      = Color(0xFF089B96)
+val TiffanyLight     = Color(0xFF5DD4CF)
+val TiffanyPale      = Color(0xFFB8EEEB)
+val TiffanyCream     = Color(0xFFE4F8F7)
+val IceMint          = Color(0xFFF0FAFA)
 
-// Cards / Surfaces
-val CardCream       = Color(0xFFFFFBF4)
-val CardWarm        = Color(0xFFF7EFE0)
-val BorderWarm      = Color(0xFFE5D5BE)
-val BorderLight     = Color(0xFFEEE2CF)
+// ── 화이트 계열 ──
+val PureWhite        = Color(0xFFFFFFFF)
+val SoftWhite        = Color(0xFFF8FFFE)
+val MintWhite        = Color(0xFFEFFAF9)
 
-// Backward compat aliases
-val WarmWhite       = HermesCream
-val NavyDeep        = HermesCream
-val NavySurface     = HermesIvory
-val SlateDark       = HermesWarm
-val CardDark        = CardCream
-val OffWhite        = InkBrown
-val White80         = Color(0xCC3D2010)
-val White60         = Color(0x997A5540)
-val White30         = Color(0x4DAA8870)
-val TealElectric    = HermesOrange
-val TealLight       = HermesOrangeDeep
-val TealPale        = Color(0xFFFAEDE3)
-val AmberGold       = HermesGold
-val AmberLight      = HermesGoldLight
-val AmberPale       = Color(0xFFF5ECD7)
-val CoralAccent     = Color(0xFFD04020)
-val NavyMid         = HermesIvory
-val NavyLight       = HermesSand
-val BorderColor     = BorderWarm
+// ── 텍스트 ──
+val TextDark         = Color(0xFF0D2B2A)
+val TextPrimary      = Color(0xFF1E3C3A)
+val TextMedium       = Color(0xFF4A7170)
+val TextLight        = Color(0xFF7AACAA)
 
-// Level Colors — Hermès tones
-val Level1Color     = Color(0xFFAA8870)   // 여행준비생 — taupe
-val Level2Color     = Color(0xFFC9A84C)   // 공항통과 — gold
-val Level3Color     = Color(0xFFE8601C)   // 호텔체크인 — orange
-val Level4Color     = Color(0xFFC94E10)   // 자유여행자 — deep orange
-val Level5Color     = Color(0xFF2C1810)   // 글로벌여행러 — chocolate
+// ── 카드 / 보더 ──
+val CardWhite        = Color(0xFFFFFFFF)
+val CardMint         = Color(0xFFF0FAF9)
+val BorderMint       = Color(0xFFB0E8E5)
+val BorderSoft       = Color(0xFFD8F2F0)
+
+// ═══════════════════════════════════════════════════════
+// 기존 화면 코드 호환 — 이름 유지, 값만 티파니로 교체
+// ═══════════════════════════════════════════════════════
+val HermesOrange     = TiffanyMint
+val HermesOrangeDeep = TiffanyDeep
+val HermesCream      = SoftWhite
+val HermesIvory      = MintWhite
+val HermesBrown      = TextDark
+val HermesBrownMid   = TextPrimary
+val HermesGold       = TiffanyLight
+val HermesGoldLight  = TiffanyPale
+val HermesSand       = IceMint
+val HermesWarm       = CardMint
+
+val InkBrown         = TextDark
+val TextBrown        = TextPrimary
+
+val CardCream        = PureWhite
+val CardWarm         = CardMint
+val BorderWarm       = BorderMint
+val BorderLight      = BorderSoft
+
+val WarmWhite        = SoftWhite
+val NavyDeep         = SoftWhite
+val NavySurface      = MintWhite
+val SlateDark        = CardMint
+val CardDark         = PureWhite
+val OffWhite         = TextDark
+val White80          = Color(0xCC1E3C3A)
+val White60          = Color(0x994A7170)
+val White30          = Color(0x4D7AACAA)
+val TealElectric     = TiffanyMint
+val TealLight        = TiffanyDeep
+val TealPale         = TiffanyCream
+val AmberGold        = TiffanyLight
+val AmberLight       = TiffanyPale
+val AmberPale        = IceMint
+val CoralAccent      = TiffanyDeep
+val NavyMid          = MintWhite
+val NavyLight        = IceMint
+val BorderColor      = BorderMint
+
+// 레벨 색상 — 티파니 톤
+val Level1Color      = Color(0xFF7AACAA)
+val Level2Color      = TiffanyLight
+val Level3Color      = TiffanyMint
+val Level4Color      = TiffanyDeep
+val Level5Color      = TextDark

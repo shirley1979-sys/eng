@@ -41,7 +41,7 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
 
     var currentIndex by remember { mutableStateOf(0) }
     var showKorean by remember { mutableStateOf(false) }
-    var countdown by remember { mutableStateOf(3) }
+    var countdown by remember { mutableStateOf(2) }
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
 
     LaunchedEffect(Unit) {
@@ -53,8 +53,8 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
 
     LaunchedEffect(currentIndex) {
         showKorean = false
-        countdown = 3
-        repeat(3) { delay(1000); countdown-- }
+        countdown = 2
+        repeat(2) { delay(1000); countdown-- }
         showKorean = true
     }
 
