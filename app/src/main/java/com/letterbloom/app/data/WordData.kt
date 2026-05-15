@@ -20,7 +20,8 @@ enum class WordCategory(val displayName: String, val emoji: String) {
     TRANSPORT("교통", "🚌"),
     EMERGENCY("응급상황", "🆘"),
     DAILY("일상회화", "💬"),
-    BUSINESS("비즈니스", "💼")
+    BUSINESS("비즈니스", "💼"),
+    PHONE("전화응대", "📞")
 }
 
 data class QuizQuestion(
@@ -394,7 +395,39 @@ val wordList = listOf(
         "신용카드 되나요, 아니면 현금만 되나요?", "소규모 가게에서"),
     Word("Can I have the receipt", "영수증 주실 수 있나요", "/kæn aɪ hæv ðə rɪˈsiːt/", WordCategory.DAILY,
         "Can I have the receipt? I need it for expenses.",
-        "영수증 주실 수 있나요? 경비 처리가 필요해요.", "구매 후")
+        "영수증 주실 수 있나요? 경비 처리가 필요해요.", "구매 후"),
+
+    // ── 전화응대 ──
+    Word("May I speak to", "~와 통화할 수 있을까요", "/meɪ aɪ spiːk tə/", WordCategory.PHONE,
+        "May I speak to Mr. Johnson, please?",
+        "존슨 씨와 통화할 수 있을까요?", "전화 연결 요청 시"),
+    Word("Who's calling", "누구세요", "/huːz ˈkɔːlɪŋ/", WordCategory.PHONE,
+        "May I ask who's calling, please?",
+        "실례지만 누구세요?", "수신 전화 시"),
+    Word("Hold on please", "잠깐만요", "/həʊld ɒn pliːz/", WordCategory.PHONE,
+        "Hold on please, I'll transfer you now.",
+        "잠깐만요, 지금 연결해드릴게요.", "잠시 대기 요청 시"),
+    Word("Can I take a message", "메모 남겨드릴까요", "/kæn aɪ teɪk ə ˈmɛsɪdʒ/", WordCategory.PHONE,
+        "She's not available. Can I take a message?",
+        "자리를 비웠어요. 메모 남겨드릴까요?", "부재중 전화 시"),
+    Word("I'll call back later", "나중에 다시 전화할게요", "/aɪl kɔːl bæk ˈleɪtə/", WordCategory.PHONE,
+        "I'll call back later when it's more convenient.",
+        "더 편한 시간에 나중에 다시 전화할게요.", "통화 종료 시"),
+    Word("You're breaking up", "목소리가 끊겨요", "/jɔː ˈbreɪkɪŋ ʌp/", WordCategory.PHONE,
+        "Sorry, you're breaking up — can you hear me?",
+        "죄송해요, 목소리가 끊겨요. 들리세요?", "통화 상태 불량 시"),
+    Word("Could you speak up", "좀 더 크게 말씀해 주실 수 있나요", "/kʊd juː spiːk ʌp/", WordCategory.PHONE,
+        "Could you speak up a little? It's hard to hear you.",
+        "좀 더 크게 말씀해 주실 수 있나요? 잘 안 들려요.", "소음 환경에서"),
+    Word("I'll put you through", "연결해드릴게요", "/aɪl pʊt juː θruː/", WordCategory.PHONE,
+        "One moment — I'll put you through to the manager.",
+        "잠깐만요, 매니저에게 연결해드릴게요.", "전화 이관 시"),
+    Word("Is this a good time", "지금 통화 괜찮으세요", "/ɪz ðɪs ə ɡʊd taɪm/", WordCategory.PHONE,
+        "Hi, is this a good time to talk for a few minutes?",
+        "안녕하세요, 지금 몇 분간 통화 괜찮으세요?", "전화 시작 시"),
+    Word("Let me transfer you", "담당자에게 연결해드릴게요", "/lɛt miː ˈtrænsfɜː juː/", WordCategory.PHONE,
+        "Please hold while I let me transfer you to the right department.",
+        "담당 부서로 연결해드리는 동안 잠깐 기다려주세요.", "부서 이관 시")
 )
 
 val quizQuestions = listOf(

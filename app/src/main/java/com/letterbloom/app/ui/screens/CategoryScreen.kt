@@ -65,7 +65,7 @@ fun CategoryScreen(onCategorySelected: (String) -> Unit, onPronunciation: () -> 
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
-                Text(text = "9가지 카테고리 + 나만의 학습 모드", fontSize = 12.sp, color = TextMedium)
+                Text(text = "10가지 카테고리 + 나만의 학습 모드", fontSize = 12.sp, color = TextMedium)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // 발음 레슨 배너
@@ -170,6 +170,7 @@ private fun CategoryCard(
         WordCategory.EMERGENCY -> Color(0xFFB03A2E)
         WordCategory.DAILY -> HermesBrownMid
         WordCategory.BUSINESS -> TiffanyDeep
+        WordCategory.PHONE -> Color(0xFF6A4C9C)
     }
     val hasLocked = unlockedCount < totalCount
 
