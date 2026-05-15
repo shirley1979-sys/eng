@@ -53,7 +53,13 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                 val wrong = LearningPrefs.getWrongWords(context)
                 wordList.filter { it.english in wrong }
             }
-            else -> wordList.filter { it.category == wordCategory }
+            else -> {
+                val all = wordList.filter { it.category == wordCategory }
+                val currentLevel = LearningPrefs.getCurrentLevel(context)
+                all.filterIndexed { i, _ ->
+                    LearningPrefs.requiredLevelForWordIndex(i, all.size) <= currentLevel
+                }
+            }
         }
     }
     val startIndex = if (isSpecial) 0 else LearningPrefs.getCategoryProgress(context, category)

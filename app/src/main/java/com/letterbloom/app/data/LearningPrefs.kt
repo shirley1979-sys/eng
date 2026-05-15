@@ -170,4 +170,31 @@ object LearningPrefs {
     fun resetCategoryProgress(context: Context, category: String) {
         prefs(context).edit().remove(progressKey(category)).apply()
     }
+
+    // ── 레벨별 단어 해금 ──
+    // 카테고리 내 위치 비율로 필요 레벨 계산 (Word 데이터 변경 없이)
+    fun requiredLevelForWordIndex(index: Int, totalInCategory: Int): Int {
+        val ratio = index.toFloat() / totalInCategory
+        return when {
+            ratio < 0.4f -> 1   // 처음 40% : 레벨 1부터
+            ratio < 0.6f -> 5   // 다음 20% : 레벨 5부터
+            ratio < 0.8f -> 10  // 다음 20% : 레벨 10부터
+            else         -> 15  // 마지막 20%: 레벨 15부터
+        }
+    }
+
+    // 현재 레벨에서 해금된 단어 수
+    fun unlockedWordCount(context: Context, total: Int): Int {
+        val level = getCurrentLevel(context)
+        return (0 until total).count { i -> requiredLevelForWordIndex(i, total) <= level }
+    }
+
+    // 다음 잠금 해제에 필요한 레벨 (이미 전부 열린 경우 null)
+    fun nextUnlockLevel(context: Context, total: Int): Int? {
+        val level = getCurrentLevel(context)
+        return (0 until total)
+            .map { i -> requiredLevelForWordIndex(i, total) }
+            .filter { it > level }
+            .minOrNull()
+    }
 }

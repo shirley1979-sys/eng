@@ -34,6 +34,7 @@ fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
     val favoriteCount = LearningPrefs.getFavorites(context).size
     val wrongCount = LearningPrefs.getWrongWords(context).size
     val categories = WordCategory.values().toList()
+    val currentLevel = LearningPrefs.getCurrentLevel(context)
 
     Box(modifier = Modifier.fillMaxSize().background(HermesCream)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -95,10 +96,15 @@ fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
                     Row(modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         row.forEach { category ->
-                            val wordCount = wordList.count { it.category == category }
+                            val allWords = wordList.filter { it.category == category }
+                            val total = allWords.size
+                            val unlocked = LearningPrefs.unlockedWordCount(context, total)
+                            val nextLock = LearningPrefs.nextUnlockLevel(context, total)
                             CategoryCard(
                                 category = category,
-                                wordCount = wordCount,
+                                unlockedCount = unlocked,
+                                totalCount = total,
+                                nextUnlockLevel = nextLock,
                                 modifier = Modifier.weight(1f),
                                 onClick = { onCategorySelected(category.name) }
                             )
@@ -116,7 +122,9 @@ fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
 @Composable
 private fun CategoryCard(
     category: WordCategory,
-    wordCount: Int,
+    unlockedCount: Int,
+    totalCount: Int,
+    nextUnlockLevel: Int?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -131,6 +139,7 @@ private fun CategoryCard(
         WordCategory.DAILY -> HermesBrownMid
         WordCategory.BUSINESS -> TiffanyDeep
     }
+    val hasLocked = unlockedCount < totalCount
 
     Box(
         modifier = modifier
@@ -145,14 +154,21 @@ private fun CategoryCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // 상단 컬러 바
+            // 해금 진도 바
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(3.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(accentColor.copy(alpha = 0.4f))
-            )
+                    .background(accentColor.copy(alpha = 0.15f))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(unlockedCount.toFloat() / totalCount)
+                        .fillMaxHeight()
+                        .background(accentColor.copy(alpha = 0.7f))
+                )
+            }
             Spacer(modifier = Modifier.height(14.dp))
             Text(text = category.emoji, fontSize = 36.sp)
             Spacer(modifier = Modifier.height(8.dp))
@@ -164,6 +180,7 @@ private fun CategoryCard(
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
+            // 해금된 단어 수 표시
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
@@ -171,10 +188,21 @@ private fun CategoryCard(
                     .padding(horizontal = 10.dp, vertical = 3.dp)
             ) {
                 Text(
-                    text = "${wordCount}단어",
+                    text = if (hasLocked) "$unlockedCount / $totalCount 단어"
+                           else "$totalCount 단어",
                     fontSize = 11.sp,
                     color = accentColor,
                     fontWeight = FontWeight.SemiBold
+                )
+            }
+            // 다음 해금 레벨 안내
+            if (hasLocked && nextUnlockLevel != null) {
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = "🔒 Lv.$nextUnlockLevel 해금",
+                    fontSize = 10.sp,
+                    color = TextLight,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
