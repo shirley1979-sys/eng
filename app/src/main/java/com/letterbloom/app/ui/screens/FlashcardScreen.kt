@@ -62,6 +62,7 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
         mutableStateOf(words.getOrNull(currentIndex)?.english?.let { LearningPrefs.getFavorites(context).contains(it) } ?: false)
     }
     var showKorean by remember { mutableStateOf(false) }
+    var showNextButton by remember { mutableStateOf(false) }
     var countdown by remember { mutableStateOf(2) }
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
 
@@ -74,10 +75,27 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
 
     LaunchedEffect(currentIndex) {
         showKorean = false
+        showNextButton = false
         if (!isSpecial) LearningPrefs.saveCategoryProgress(context, category, currentIndex)
+        val currentWord = words.getOrNull(currentIndex) ?: return@LaunchedEffect
+
+        // 2초 카운트다운
         countdown = 2
-        repeat(2) { delay(1000); countdown-- }
+        delay(1000); countdown = 1
+        delay(1000); countdown = 0
+
+        // 단어 TTS 자동 재생
+        tts?.speak(currentWord.english, TextToSpeech.QUEUE_FLUSH, null, null)
         showKorean = true
+
+        // 2초 후 예문 TTS 자동 재생
+        delay(2000)
+        tts?.speak(currentWord.exampleSentence, TextToSpeech.QUEUE_FLUSH, null, null)
+
+        // 예문 재생 시간 + 따라 할 시간 확보
+        val repeatDelay = (currentWord.exampleSentence.length * 70L + 4000L).coerceAtLeast(5000L)
+        delay(repeatDelay)
+        showNextButton = true
     }
 
     val koreanAlpha by animateFloatAsState(
@@ -91,7 +109,7 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                 Text("아직 단어가 없어요", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = if (category == "FAVORITES") "플래시카드에서 ❤️를 눌러 추가해보세요"
+                    text = if (category == "FAVORITES") "플래시카드에서 하트를 눌러 추가해보세요"
                            else "퀴즈를 풀면 오답이 여기 저장돼요",
                     fontSize = 14.sp, color = TextLight, textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 32.dp)
@@ -107,6 +125,14 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
     }
 
     val word = words[currentIndex]
+
+    // 단어 길이에 따른 글자 크기 자동 조정 (겹침 방지)
+    val wordFontSize = when {
+        word.english.length <= 6  -> 40.sp
+        word.english.length <= 10 -> 32.sp
+        word.english.length <= 14 -> 26.sp
+        else                      -> 22.sp
+    }
 
     Box(
         modifier = Modifier
@@ -185,22 +211,25 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()) {
 
+                    // 단어 (길이에 따라 글자 크기 자동 조정)
                     Text(
                         text = word.english,
-                        fontSize = 46.sp,
+                        fontSize = wordFontSize,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    Text(text = word.ipa, fontSize = 17.sp, color = HermesGold)
+                    Text(text = word.ipa, fontSize = 15.sp, color = HermesGold,
+                        textAlign = TextAlign.Center)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // TTS 버튼
+                    // 단어 다시 듣기 버튼 (수동 재생)
                     Box(
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(Color.White.copy(alpha = 0.12f))
                             .border(1.dp, HermesGold.copy(alpha = 0.5f), CircleShape)
@@ -209,8 +238,8 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.VolumeUp, contentDescription = "발음",
-                            tint = HermesGold, modifier = Modifier.size(22.dp))
+                        Icon(Icons.Default.VolumeUp, contentDescription = "단어 듣기",
+                            tint = HermesGold, modifier = Modifier.size(20.dp))
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -218,10 +247,11 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                     Spacer(modifier = Modifier.height(20.dp))
 
                     if (!showKorean) {
+                        // 카운트다운
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = "$countdown", fontSize = 44.sp,
                                 fontWeight = FontWeight.Bold, color = HermesOrange)
-                            Text(text = "초 후 뜻 공개", fontSize = 12.sp,
+                            Text(text = "초 후 자동 재생", fontSize = 12.sp,
                                 color = Color.White.copy(alpha = 0.4f))
                         }
                     } else {
@@ -229,12 +259,13 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.alpha(koreanAlpha)
                         ) {
-                            Text(text = word.korean, fontSize = 30.sp,
+                            Text(text = word.korean, fontSize = 26.sp,
                                 fontWeight = FontWeight.Bold, color = HermesIvory,
                                 textAlign = TextAlign.Center)
 
                             Spacer(modifier = Modifier.height(20.dp))
 
+                            // 예문 박스 + 예문 다시 듣기 버튼
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -243,15 +274,47 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
                                     .padding(16.dp)
                             ) {
                                 Column {
-                                    Text(
-                                        text = "\"${word.exampleSentence}\"",
-                                        fontSize = 14.sp, color = Color.White.copy(alpha = 0.9f),
-                                        fontWeight = FontWeight.Medium, lineHeight = 22.sp
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = "\"${word.exampleSentence}\"",
+                                            fontSize = 13.sp, color = Color.White.copy(alpha = 0.9f),
+                                            fontWeight = FontWeight.Medium, lineHeight = 21.sp,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        // 예문 다시 듣기 버튼
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(Color.White.copy(alpha = 0.1f))
+                                                .clickable {
+                                                    tts?.speak(word.exampleSentence, TextToSpeech.QUEUE_FLUSH, null, null)
+                                                },
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(Icons.Default.VolumeUp, contentDescription = "예문 듣기",
+                                                tint = HermesGold.copy(alpha = 0.8f), modifier = Modifier.size(16.dp))
+                                        }
+                                    }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(text = word.exampleKorean, fontSize = 12.sp,
                                         color = Color.White.copy(alpha = 0.55f), lineHeight = 20.sp)
                                 }
+                            }
+
+                            // 따라 할 시간 안내
+                            if (!showNextButton) {
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "따라 말해보세요...",
+                                    fontSize = 12.sp,
+                                    color = HermesOrange.copy(alpha = 0.8f),
+                                    fontWeight = FontWeight.Medium
+                                )
                             }
                         }
                     }
@@ -260,7 +323,8 @@ fun FlashcardScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (showKorean) {
+            // 다음 버튼 — 따라 할 시간 후에만 표시
+            if (showNextButton) {
                 val coroutineScope = rememberCoroutineScope()
                 Box(
                     modifier = Modifier
