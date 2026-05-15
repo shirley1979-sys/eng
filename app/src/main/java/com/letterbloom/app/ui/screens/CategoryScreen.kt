@@ -29,7 +29,7 @@ import com.letterbloom.app.data.wordList
 import com.letterbloom.app.ui.theme.*
 
 @Composable
-fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
+fun CategoryScreen(onCategorySelected: (String) -> Unit, onPronunciation: () -> Unit, onBack: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val favoriteCount = LearningPrefs.getFavorites(context).size
     val wrongCount = LearningPrefs.getWrongWords(context).size
@@ -67,6 +67,38 @@ fun CategoryScreen(onCategorySelected: (String) -> Unit, onBack: () -> Unit) {
             ) {
                 Text(text = "9가지 카테고리 + 나만의 학습 모드", fontSize = 12.sp, color = TextMedium)
                 Spacer(modifier = Modifier.height(12.dp))
+
+                // 발음 레슨 배너
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                listOf(HermesBrown, Color(0xFF4A2010))
+                            )
+                        )
+                        .border(1.dp, HermesGold.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+                        .clickable { onPronunciation() }
+                        .padding(horizontal = 20.dp, vertical = 14.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("🎤", fontSize = 28.sp)
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("발음 레슨", fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold, color = HermesIvory)
+                            Text("마이크로 발음 연습하기",
+                                fontSize = 12.sp, color = Color.White.copy(alpha = 0.6f))
+                        }
+                        Text("→", fontSize = 18.sp, color = HermesGold,
+                            fontWeight = FontWeight.Bold)
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // 특별 학습 카드
                 Row(modifier = Modifier.fillMaxWidth(),

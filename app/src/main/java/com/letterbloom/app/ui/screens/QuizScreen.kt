@@ -37,6 +37,8 @@ fun QuizScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit) {
     var showResult by remember { mutableStateOf(false) }
     var score by remember { mutableStateOf(0) }
     var showFinal by remember { mutableStateOf(false) }
+    var hearts by remember { mutableStateOf(LearningPrefs.getHearts(context)) }
+    var showNoHeartsWarning by remember { mutableStateOf(false) }
 
     val progressAnim by animateFloatAsState(
         targetValue = (currentIndex + 1).toFloat() / questions.size,
@@ -52,6 +54,26 @@ fun QuizScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit) {
 
     val question = questions[currentIndex]
 
+    if (showNoHeartsWarning) {
+        AlertDialog(
+            onDismissRequest = { showNoHeartsWarning = false },
+            title = { Text("하트가 없어요", fontWeight = FontWeight.Bold) },
+            text = { Text("하트가 모두 소진됐어요.\n30분마다 하트가 1개씩 회복돼요.\n계속 도전하시겠어요?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showNoHeartsWarning = false
+                    LearningPrefs.refillHearts(context)
+                    hearts = LearningPrefs.MAX_HEARTS
+                }) { Text("계속하기", color = HermesOrange) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showNoHeartsWarning = false; onBack() }) {
+                    Text("나중에")
+                }
+            }
+        )
+    }
+
     Box(modifier = Modifier.fillMaxSize().background(HermesCream)) {
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -66,9 +88,17 @@ fun QuizScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit) {
                 IconButton(onClick = onBack) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "뒤로", tint = HermesBrown)
                 }
-                Text(text = "QUIZ  ${currentIndex + 1} / ${questions.size}",
-                    fontSize = 11.sp, fontWeight = FontWeight.Bold,
-                    color = TextMedium, letterSpacing = 1.sp)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "QUIZ  ${currentIndex + 1} / ${questions.size}",
+                        fontSize = 11.sp, fontWeight = FontWeight.Bold,
+                        color = TextMedium, letterSpacing = 1.sp)
+                    // 하트 표시
+                    Row {
+                        repeat(LearningPrefs.MAX_HEARTS) { i ->
+                            Text(if (i < hearts) "❤️" else "🖤", fontSize = 13.sp)
+                        }
+                    }
+                }
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -198,9 +228,13 @@ fun QuizScreen(category: String, onComplete: () -> Unit, onBack: () -> Unit) {
                             showResult = true
                             if (index == question.correctIndex) {
                                 score++
+                                LearningPrefs.addXP(context, 20)
                                 if (question.wordEnglish.isNotEmpty())
                                     LearningPrefs.markWordCorrect(context, question.wordEnglish)
                             } else {
+                                LearningPrefs.loseHeart(context)
+                                hearts = LearningPrefs.getHearts(context)
+                                if (hearts == 0) showNoHeartsWarning = true
                                 if (question.wordEnglish.isNotEmpty())
                                     LearningPrefs.addWrongWord(context, question.wordEnglish)
                             }

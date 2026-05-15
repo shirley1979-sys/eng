@@ -15,6 +15,11 @@ object LearningPrefs {
     private const val KEY_CORRECT_ANSWERS = "correct_answers"
     private const val KEY_TOTAL_ANSWERS = "total_answers"
     private const val KEY_ONBOARDING_DONE = "onboarding_done"
+    private const val KEY_HEARTS = "hearts"
+    private const val KEY_LAST_HEART_LOSS_TIME = "last_heart_loss_time"
+    private const val KEY_XP = "xp"
+    const val MAX_HEARTS = 5
+    private const val HEART_RECOVERY_MINUTES = 30L
 
     // 레벨 50개 — 5단어마다 레벨업
     private val LEVEL_NAMES = listOf(
@@ -55,6 +60,40 @@ object LearningPrefs {
     fun isOnboardingDone(context: Context): Boolean =
         prefs(context).getBoolean(KEY_ONBOARDING_DONE, false)
 
+    // ── 하트 시스템 ──
+    fun getHearts(context: Context): Int {
+        val p = prefs(context)
+        val stored = p.getInt(KEY_HEARTS, MAX_HEARTS)
+        if (stored >= MAX_HEARTS) return MAX_HEARTS
+        val lastLoss = p.getLong(KEY_LAST_HEART_LOSS_TIME, 0L)
+        val recovered = ((System.currentTimeMillis() - lastLoss) / (1000 * 60 * HEART_RECOVERY_MINUTES)).toInt()
+        val newHearts = minOf(MAX_HEARTS, stored + recovered)
+        if (newHearts > stored) p.edit().putInt(KEY_HEARTS, newHearts).apply()
+        return newHearts
+    }
+
+    fun loseHeart(context: Context) {
+        val current = getHearts(context)
+        if (current > 0) {
+            prefs(context).edit()
+                .putInt(KEY_HEARTS, current - 1)
+                .putLong(KEY_LAST_HEART_LOSS_TIME, System.currentTimeMillis())
+                .apply()
+        }
+    }
+
+    fun refillHearts(context: Context) {
+        prefs(context).edit().putInt(KEY_HEARTS, MAX_HEARTS).apply()
+    }
+
+    // ── XP 시스템 ──
+    fun getXP(context: Context): Int = prefs(context).getInt(KEY_XP, 0)
+
+    fun addXP(context: Context, amount: Int) {
+        val p = prefs(context)
+        p.edit().putInt(KEY_XP, p.getInt(KEY_XP, 0) + amount).apply()
+    }
+
     // 레벨 기준: 5단어마다 레벨업, 최대 50레벨
     fun levelForWords(totalWords: Int): Int =
         (totalWords / 5 + 1).coerceIn(1, 50)
@@ -92,6 +131,8 @@ object LearningPrefs {
         // 레벨 자동 업데이트 (50레벨)
         val newLevel = levelForWords(totalWords)
         val newLevelName = levelNameForLevel(newLevel)
+        // XP: 단어 1개당 10 XP + 연속학습 보너스
+        val xpGain = count * 10 + if (streak >= 3) count * 2 else 0
 
         prefs.edit()
             .putInt(KEY_TODAY_WORDS, todayWords)
@@ -101,6 +142,7 @@ object LearningPrefs {
             .putInt(KEY_DAILY_GOAL, newGoal)
             .putInt(KEY_CURRENT_LEVEL, newLevel)
             .putString(KEY_LEVEL_NAME, newLevelName)
+            .putInt(KEY_XP, prefs.getInt(KEY_XP, 0) + xpGain)
             .apply()
     }
 

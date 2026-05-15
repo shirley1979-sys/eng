@@ -21,6 +21,7 @@ sealed class Screen(val route: String) {
         fun createRoute(category: String) = "quiz/$category"
     }
     object Progress : Screen("progress")
+    object Pronunciation : Screen("pronunciation")
 }
 
 @Composable
@@ -67,8 +68,12 @@ fun LetterBloomNavGraph(navController: NavHostController) {
                 onCategorySelected = { category ->
                     navController.navigate(Screen.Flashcard.createRoute(category))
                 },
+                onPronunciation = { navController.navigate(Screen.Pronunciation.route) },
                 onBack = { navController.popBackStack() }
             )
+        }
+        composable(Screen.Pronunciation.route) {
+            PronunciationScreen(onBack = { navController.popBackStack() })
         }
         composable(Screen.Flashcard.route) { backStackEntry ->
             val category = backStackEntry.arguments?.getString("category") ?: "AIRPORT"

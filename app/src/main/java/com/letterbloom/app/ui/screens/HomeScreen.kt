@@ -36,6 +36,8 @@ fun HomeScreen(onCategoryClick: () -> Unit, onProgressClick: () -> Unit) {
     var currentLevel by remember { mutableStateOf("여행 준비생") }
     var totalWords by remember { mutableStateOf(0) }
     var currentLevelNum by remember { mutableStateOf(1) }
+    var hearts by remember { mutableStateOf(LearningPrefs.MAX_HEARTS) }
+    var xp by remember { mutableStateOf(0) }
 
     LaunchedEffect(true) {
         todayWords = LearningPrefs.getTodayWords(context)
@@ -44,6 +46,8 @@ fun HomeScreen(onCategoryClick: () -> Unit, onProgressClick: () -> Unit) {
         currentLevel = LearningPrefs.getLevelName(context)
         totalWords = LearningPrefs.getTotalWords(context)
         currentLevelNum = LearningPrefs.getCurrentLevel(context)
+        hearts = LearningPrefs.getHearts(context)
+        xp = LearningPrefs.getXP(context)
     }
 
     val progressAnim by animateFloatAsState(
@@ -74,13 +78,37 @@ fun HomeScreen(onCategoryClick: () -> Unit, onProgressClick: () -> Unit) {
                     .padding(horizontal = 24.dp, vertical = 28.dp)
             ) {
                 Column {
-                    Text(
-                        text = "L E T T E R B L O O M",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = HermesGold,
-                        letterSpacing = 3.sp
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "L E T T E R B L O O M",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = HermesGold,
+                            letterSpacing = 3.sp
+                        )
+                        // 하트 + XP
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row {
+                                repeat(LearningPrefs.MAX_HEARTS) { i ->
+                                    Text(if (i < hearts) "❤️" else "🖤", fontSize = 14.sp)
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(HermesGold.copy(alpha = 0.15f))
+                                    .padding(horizontal = 8.dp, vertical = 3.dp)
+                            ) {
+                                Text("✦ $xp XP", fontSize = 11.sp,
+                                    color = HermesGold, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
